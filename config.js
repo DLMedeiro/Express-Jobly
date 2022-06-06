@@ -8,15 +8,15 @@ require("colors");
 const SECRET_KEY = process.env.SECRET_KEY || "secret-dev";
 
 // Changed from 3001 to 5432 - const error = this._ending ? new Error('Connection terminated') : new Error('Connection terminated unexpectedly')
-const PORT = +process.env.PORT || 5432;
+const PORT = +process.env.PORT || 3001;
 
 // Use dev database, testing database, or via env var, production database'
 
 
 function getDatabaseUri() {
   return (process.env.NODE_ENV === "test")
-      ? `postgresql://postgres:${process.env.PASSWORD}@localhost:${PORT}/jobly_test`
-      : `postgresql://postgres:${process.env.PASSWORD}@localhost:${PORT}/jobly`;
+      ? `postgresql://postgres:${process.env.PASSWORD}@localhost:5432/jobly_test`
+      : `postgresql://postgres:${process.env.PASSWORD}@localhost:5432/jobly`;
 }
 
 // Initial
