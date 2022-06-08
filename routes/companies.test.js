@@ -12,6 +12,7 @@ const {
   commonAfterAll,
   u1Token,
 } = require("./_testCommon");
+const { fail } = require("assert");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -94,6 +95,49 @@ describe("GET /companies", function () {
             },
           ],
     });
+  });
+  test("ok for all filters", async function () {
+    const resp = await request(app).get("/companies?name=c&minEmployees=1&maxEmployees=2");
+    expect(resp.body).toEqual({
+      companies:
+          [
+            {
+              handle: "c1",
+              name: "C1",
+              description: "Desc1",
+              numEmployees: 1,
+              logoUrl: "http://c1.img",
+            },
+            {
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            }
+          ],
+    });
+  });
+  test("ok for one filter", async function () {
+    const resp = await request(app).get("/companies?name=c1");
+    expect(resp.body).toEqual({
+      companies:
+          [
+            {
+              handle: "c1",
+              name: "C1",
+              description: "Desc1",
+              numEmployees: 1,
+              logoUrl: "http://c1.img",
+            }
+          ],
+    });
+  });
+  test("error for min > max"), async function () {
+      const res = await request(app).get("/companies?minEmployees=4&maxEmployees=2");
+
+      expect(res.statusCode).toEqual(400);
+    }
   });
 
   test("fails: test next() handler", async function () {

@@ -32,4 +32,5 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   };
 }
 
-module.exports = { sqlForPartialUpdate };
+
+module.exports = { sqlForPartialUpdate};

@@ -52,7 +52,12 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   try {
-    const companies = await Company.findAll();
+    const f = req.query
+    // Turns string values into an integer
+    if (f.minEmployees !== undefined) f.minEmployees = +f.minEmployees;
+    if (f.maxEmployees !== undefined) f.maxEmployees = +f.maxEmployees;
+    // console.log(`req.query = ${req.query}`)
+    const companies = await Company.findAll(f);
     return res.json({ companies });
   } catch (err) {
     return next(err);
@@ -87,9 +92,8 @@ router.get("/:handle", async function (req, res, next) {
  * Authorization required: login
  */
 
-//  ensureLoggedIn
 
-router.patch("/:handle", async function (req, res, next) {
+router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {

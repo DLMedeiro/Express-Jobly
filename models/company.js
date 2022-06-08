@@ -2,7 +2,8 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate } = require("../helpers/sql");
+const { sqlForPartialUpdate} = require("../helpers/sql");
+
 
 /** Related functions for companies. */
 
@@ -49,15 +50,54 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
-    const companiesRes = await db.query(
-          `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
+  static async findAll(searchFilters = {}) {
+    const { minEmployees, maxEmployees, name } = searchFilters;
+
+    console.log(`searchFilters = ${searchFilters}, minEmp = ${minEmployees}, maxEmp = ${maxEmployees}, name = ${name}`);
+
+    // Query text "Where" statemet
+    let whereProps = [];
+
+    // Values to be added in to where statement $ placehoders
+    let queryVals = [];
+
+    let sqlQuery = 
+      `SELECT handle,
+        name,
+        description,
+        num_employees AS "numEmployees",
+        logo_url AS "logoUrl"
+      FROM companies`;
+
+    if (minEmployees > maxEmployees) {
+      throw new BadRequestError("min value can not be larger than max");
+    };
+    
+    if (minEmployees !== undefined) {
+      queryVals.push(minEmployees);
+      whereProps.push(`num_employees >= $${queryVals.length}`);
+    };
+    if (maxEmployees !== undefined) {
+      queryVals.push(maxEmployees);
+      whereProps.push(`num_employees <= $${queryVals.length}`);
+    };
+    if (name) {
+      queryVals.push(`%${name}%`);
+      whereProps.push(`name ILIKE $${queryVals.length}`);
+    };
+
+    if(whereProps.length > 0) {
+      sqlQuery += " WHERE " + whereProps.join(" AND ");
+    };
+
+    sqlQuery += " ORDER BY name"
+
+    let companiesRes = await db.query(sqlQuery, queryVals);
+
+    // console.log(`return = ${companiesRes.rows}`);
+    // console.log(`queryVals = ${queryVals}`);
+    // console.log(`whereProps = ${whereProps}`);
+
     return companiesRes.rows;
   }
 
