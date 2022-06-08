@@ -4,7 +4,7 @@
 
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
-const { UnauthorizedError } = require("../expressError");
+const { UnauthorizedError, NotFoundError } = require("../expressError");
 
 
 /** Middleware: Authenticate user.
@@ -42,8 +42,47 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
+function ensureAdmin(req, res, next) {
+  try {
+    if (!res.locals.user || !res.locals.user.isAdmin) throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+// function ensureAdminOrUser(req, res, next) {
+//   // console.log(res.locals.user)
+//   // const qUser = req.params.username
+//   // console.log(`qUser = ${qUser}`)
+//   try {
+//     // No user logged in
+//     if (!res.locals.user) throw new UnauthorizedError();
+//     // if user doesn't exist
+//     if (!req.params.username) throw new UnauthorizedError();
+//     // if logged in user is not an admin and does not match the query
+//     if (!res.locals.user.isAdmin && (res.locals.user !== req.params.username)) throw new UnauthorizedError();
+
+//     return next();
+//   } catch (err) {
+//     return next(err);
+//   }
+// }
+function ensureAdminOrUser(req, res, next) {
+  // console.log(res.locals.user)
+  // const qUser = req.params.username
+  // console.log(`qUser = ${qUser}`)
+  try {
+    if (!res.locals.user || ((req.params.username !== res.locals.user.username) && !res.locals.user.isAdmin)) throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
 
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
+  ensureAdmin,
+  ensureAdminOrUser
 };
