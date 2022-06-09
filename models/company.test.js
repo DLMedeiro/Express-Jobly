@@ -172,8 +172,15 @@ describe("get", function () {
       handle: "c1",
       name: "C1",
       description: "Desc1",
-      numEmployees: 1,
-      logoUrl: "http://c1.img",
+      num_employees: 1,
+      logo_Url: "http://c1.img",
+      jobs: {
+        companyHandle: "c1",
+        equity: 0,
+        id: expect.any(Number),
+        salary: 100000,
+        title: "j1"
+      }
     });
   });
 

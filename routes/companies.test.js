@@ -13,7 +13,6 @@ const {
   u1Token,
   u2Token
 } = require("./_testCommon");
-const { fail } = require("assert");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
