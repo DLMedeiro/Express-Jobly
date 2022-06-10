@@ -131,10 +131,11 @@ class Company {
     if (!c) throw new NotFoundError(`No company: ${handle}`);
 
     return {
+      name: c.name,
       handle: c.handle,
       description: c.description,
       num_employees: c.numEmployees,
-      logo_url: c.logo_url,
+      logo_url: c.logoUrl,
       jobs: {
         id: c.id,
         title: c.title,

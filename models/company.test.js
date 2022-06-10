@@ -173,10 +173,10 @@ describe("get", function () {
       name: "C1",
       description: "Desc1",
       num_employees: 1,
-      logo_Url: "http://c1.img",
+      logo_url: "http://c1.img",
       jobs: {
         companyHandle: "c1",
-        equity: 0,
+        equity: "0",
         id: expect.any(Number),
         salary: 100000,
         title: "j1"

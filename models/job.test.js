@@ -22,7 +22,7 @@ describe("create", function () {
   const newJob = {
     title: "new",
     salary: 100000,
-    equity: 0.5,
+    equity: "0.5",
     companyHandle: "c1"
   };
 
@@ -31,15 +31,15 @@ describe("create", function () {
     expect(job).toEqual(newJob);
 
     const result = await db.query(
-          `SELECT tite, salary, equity, company_handle
+          `SELECT title, salary, equity, company_handle AS "companyHandle"
            FROM jobs
            WHERE title = 'new'`);
     expect(result.rows).toEqual([
       {
         title: "new",
         salary: 100000,
-        equity: 0.5,
-        company_handle: "ci"
+        equity: "0.5",
+        companyHandle: "c1"
       },
     ]);
   });
@@ -64,13 +64,13 @@ describe("findAll", function () {
       {
         title: "j1",
         salary: 100000,
-        equity: 0,
+        equity: "0",
         companyHandle: "c1"
       },
       {
         title: "j2",
         salary: 500000,
-        equity: 0.5,
+        equity: "0.5",
         companyHandle: "c2"
       }
     ]);
@@ -82,7 +82,7 @@ describe("findAll", function () {
     {
         title: "j1",
         salary: 100000,
-        equity: 0,
+        equity: "0",
         companyHandle: "c1"
         }
     ]);
@@ -93,7 +93,7 @@ describe("findAll", function () {
     {
         title: "j2",
         salary: 500000,
-        equity: 0.5,
+        equity: "0.5",
         companyHandle: "c2"
     }
     ]);
@@ -104,7 +104,7 @@ describe("findAll", function () {
         {
             title: "j2",
             salary: 500000,
-            equity: 0.5,
+            equity: "0.5",
             companyHandle: "c2"
         }
     ]);
@@ -115,13 +115,13 @@ describe("findAll", function () {
         {
             title: "j1",
             salary: 100000,
-            equity: 0,
+            equity: "0",
             companyHandle: "c1"
           },
           {
             title: "j2",
             salary: 500000,
-            equity: 0.5,
+            equity: "0.5",
             companyHandle: "c2"
           }
     ]);
@@ -139,7 +139,7 @@ describe("get", function () {
     expect(job).toEqual({
         title: "j1",
         salary: 100000,
-        equity: 0,
+        equity: "0",
         companyHandle: "c1"
       });
   });
@@ -159,7 +159,9 @@ describe("get", function () {
 describe("update", function () {
   const updateData = {
     title: "j1",
-    equity: 0.2
+    salary: 50,
+    equity: "0",
+    companyHandle: "c1"
   };
 
   test("works", async function () {
@@ -170,13 +172,13 @@ describe("update", function () {
     });
 
     const result = await db.query(
-          `SELECT title, salary, equity, company_handle
+          `SELECT title, salary, equity, company_handle AS "companyHandle"
            FROM jobs
            WHERE title = 'j1'`);
     expect(result.rows).toEqual([{
         title: "j1",
-        salary: 100000,
-        equity: 0.2,
+        salary: 50,
+        equity: "0",
         companyHandle: "c1"
       }]);
   });

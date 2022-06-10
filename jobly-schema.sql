@@ -24,6 +24,7 @@ CREATE TABLE jobs (
   company_handle VARCHAR(25) NOT NULL
     REFERENCES companies ON DELETE CASCADE
 );
+-- In order to account for a higher precision level of decimals, postgres uses the the types DECIMAL or NUMERICAL.  Data returned from these is a string "because numeric can be way larger than Number.MAX_SAFE_INTEGER, the only safe way to parse it is to return a string with full precision." -> so the prewritten portions of the code were set up to have the equity input as NUMERICAL and then the remainder of the code took into account that being returned as a string.
 
 CREATE TABLE applications (
   username VARCHAR(25)

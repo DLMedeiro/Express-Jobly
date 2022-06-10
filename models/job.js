@@ -22,7 +22,7 @@ class Job {
     const duplicateCheck = await db.query(
           `SELECT title
            FROM jobs
-           WHERE handle = $1`,
+           WHERE title = $1`,
         [title]);
 
     if (duplicateCheck.rows[0])
@@ -78,7 +78,7 @@ class Job {
       whereProps.push(`salary >= $${queryVals.length}`);
     };
 
-    if(hasEquity === "true") {
+    if(hasEquity) {
         whereProps.push(`equity > 0`)
     }
 
@@ -138,23 +138,23 @@ class Job {
     const { setCols, values } = sqlForPartialUpdate(
         data,
         {
-          comoanyHandle: "company_handle"
+          companyHandle: "company_handle"
         });
     const handleVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE job 
+    const querySql = `UPDATE jobs 
                       SET ${setCols} 
                       WHERE title = ${handleVarIdx} 
                       RETURNING title, 
                                 salary, 
                                 equity, 
-                                company_handle AS "companyHadle"`;
+                                company_handle AS "companyHandle"`;
     const result = await db.query(querySql, [...values, title]);
     const job = result.rows[0];
 
     if (!job) throw new NotFoundError(`No job with title: ${title}`);
 
-    return title;
+    return job;
   }
 
   /** Delete given job from database; returns undefined.

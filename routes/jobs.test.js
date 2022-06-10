@@ -36,7 +36,12 @@ describe("POST /jobs", function () {
         .set("authorization", `Bearer ${u2Token}`);
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
-      job: newJob,
+      job: {
+        title: "new",
+        salary: 100000,
+        equity: "0.5",
+        companyHandle: "c1"
+      },
     });
   });
 
@@ -47,7 +52,7 @@ describe("POST /jobs", function () {
 
   test("bad request with missing data", async function () {
     const resp = await request(app)
-        .post("/job")
+        .post("/jobs")
         .send({
           title: "new"
         })
@@ -78,27 +83,27 @@ describe("GET /jobs", function () {
             {
                 title: "j1",
                 salary: 100000,
-                equity: 0,
+                equity: "0",
                 companyHandle: "c1"
               },
               {
                 title: "j2",
                 salary: 500000,
-                equity: 0.5,
+                equity: "0.5",
                 companyHandle: "c2"
               }
           ],
     });
   });
   test("ok for all filters", async function () {
-    const resp = await request(app).get("/jobs?title=cj1&minSalary=900&hasEquity:flase");
+    const resp = await request(app).get("/jobs?title=j1&minSalary=900&hasEquity:flase");
     expect(resp.body).toEqual({
       jobs:
           [
             {
                 title: "j1",
                 salary: 100000,
-                equity: 0,
+                equity: "0",
                 companyHandle: "c1"
               }
           ]
@@ -107,14 +112,28 @@ describe("GET /jobs", function () {
   test("ok for one filter", async function () {
     const resp = await request(app).get("/jobs?title=j1");
     expect(resp.body).toEqual({
-      companies:
+      jobs:
           [
             {
                 title: "j1",
                 salary: 100000,
-                equity: 0,
+                equity: "0",
                 companyHandle: "c1"
               }
+          ],
+    });
+  });
+  test("ok for has equity > 0", async function () {
+    const resp = await request(app).get("/jobs?hasEquity=true");
+    expect(resp.body).toEqual({
+      jobs:
+          [
+            {
+              title: "j2",
+              salary: 500000,
+              equity: "0.5",
+              companyHandle: "c2"
+            }
           ],
     });
   });
@@ -140,7 +159,7 @@ describe("GET /jobs/:title", function () {
       job: {
         title: "j1",
         salary: 100000,
-        equity: 0,
+        equity: "0",
         companyHandle: "c1"
       }
     });
@@ -166,7 +185,7 @@ describe("PATCH /jobs/:title", function () {
       job: {
         title: "J1-new",
         salary: 100000,
-        equity: 0,
+        equity: "0",
         companyHandle: "c1"
       }
     });
