@@ -12,6 +12,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  jobIdList
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -208,6 +209,38 @@ describe("update", function () {
     }
   });
 });
+
+/************************************** apply */
+describe("apply", function () {
+  test("works and verifies addition to database", async function() {
+    // const num = parseInt()
+    await User.apply("u1", jobIdList[0]);
+
+    const compApp = await db.query(
+      "SELECT * FROM applications WHERE job_id = $1", [jobIdList[0]]);
+    expect(compApp.rows).toEqual([{
+          job_id: jobIdList[0],
+          username: "u1"
+        }]);
+  })
+  test("user doesn't exist", async function() {
+    try {
+      await User.apply("nope", jobIdList[0]);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    } 
+  })
+  test("job doesn't exist", async function() {
+    try {
+      await User.apply("u1", 1000);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    } 
+  })
+})
+
 
 /************************************** remove */
 

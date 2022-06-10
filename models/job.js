@@ -2,7 +2,7 @@
 
 const { query } = require("express");
 const db = require("../db");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError, ExpressError } = require("../expressError");
 const { sqlForPartialUpdate} = require("../helpers/sql");
 
 
@@ -18,26 +18,28 @@ class Job {
    * Throws BadRequestError if job already in database.
    * */
 
-  static async create({ title, salary, equity, companyHandle }) {
+  static async create(data) {
     const duplicateCheck = await db.query(
           `SELECT title
            FROM jobs
            WHERE title = $1`,
-        [title]);
+        [data.title]);
 
-    if (duplicateCheck.rows[0])
-      throw new BadRequestError(`Duplicate job: ${title}`);
+
+    if (duplicateCheck.rows[0]){
+      throw new ExpressError(`Duplicate job: ${data.title}`,400);
+    }
 
     const result = await db.query(
           `INSERT INTO jobs
            (title, salary, equity, company_handle)
            VALUES ($1, $2, $3, $4)
-           RETURNING title, salary, equity, company_handle AS "companyHandle"`,
+           RETURNING id, title, salary, equity, company_handle AS "companyHandle"`,
         [
-          title,
-          salary,
-          equity,
-          companyHandle,
+          data.title,
+          data.salary,
+          data.equity,
+          data.companyHandle,
         ],
     );
     const job = result.rows[0];
@@ -53,7 +55,7 @@ class Job {
   static async findAll(searchFilters = {}) {
     const { title, minSalary, hasEquity } = searchFilters;
 
-    console.log(`searchFilters = ${searchFilters}, title = ${title}, minSalary = ${minSalary}, hasEquity = ${hasEquity}`);
+    // console.log(`searchFilters = ${searchFilters}, title = ${title}, minSalary = ${minSalary}, hasEquity = ${hasEquity}`);
 
     // Query text "Where" statemet
     let whereProps = [];
@@ -91,9 +93,9 @@ class Job {
 
     let jobsRes = await db.query(sqlQuery, queryVals);
 
-    console.log(`return = ${jobsRes.rows}`);
-    console.log(`queryVals = ${queryVals}`);
-    console.log(`whereProps = ${whereProps}`);
+    // console.log(`return = ${jobsRes.rows}`);
+    // console.log(`queryVals = ${queryVals}`);
+    // console.log(`whereProps = ${whereProps}`);
 
     return jobsRes.rows;
   }
@@ -107,7 +109,8 @@ class Job {
 
   static async get(title) {
     const jobRes = await db.query(
-          `SELECT title,
+          `SELECT id,
+                  title,
                   salary,
                   equity,
                   company_handle AS "companyHandle"
@@ -118,7 +121,7 @@ class Job {
     const job = jobRes.rows[0];
 
     if (!job) throw new NotFoundError(`No job with title: ${title}`);
-    console.log(`equity type = ${typeof(job.equity)}`);
+    // console.log(`equity type = ${typeof(job.equity)}`);
     return job;
   }
 

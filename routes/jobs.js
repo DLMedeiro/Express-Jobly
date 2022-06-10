@@ -31,6 +31,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
+    console.log(req.body)
 
     const job = await Job.create(req.body);
     return res.status(201).json({ job });
@@ -55,7 +56,7 @@ router.get("/", async function (req, res, next) {
     const f = req.query
     // Turns string values into an integer
     if (f.minSalary !== undefined) f.minSalary = +f.minSalary;
-    console.log(`req.query = ${req.query}`)
+    // console.log(`req.query = ${req.query}`)
     const jobs = await Job.findAll(f);
     return res.json({ jobs });
   } catch (err) {
@@ -92,8 +93,8 @@ router.get("/:title", async function (req, res, next) {
 
 
 router.patch("/:title", ensureAdmin, async function (req, res, next) {
-  console.log(`params.title = ${req.params.title}`)
-  console.log(`req.body = ${req.body}`)
+  // console.log(`params.title = ${req.params.title}`)
+  // console.log(`req.body = ${req.body}`)
   try {
     const validator = jsonschema.validate(req.body, jobUpdateSchema);
     if (!validator.valid) {
@@ -102,7 +103,7 @@ router.patch("/:title", ensureAdmin, async function (req, res, next) {
     }
 
     const job = await Job.update(req.params.title, req.body);
-    console.log(res.json({job}))
+    // console.log(res.json({job}))
     return res.json({ job });
   } catch (err) {
     return next(err);

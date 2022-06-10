@@ -12,7 +12,8 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
-  u2Token
+  u2Token,
+  jobIds
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -110,7 +111,33 @@ describe("POST /users", function () {
     expect(resp.statusCode).toEqual(400);
   });
 });
-
+/************************************** POST /users/username/jobs/id */
+describe("POST /users/:username/jobs/:id", function() {
+  test("works for admins", async function () {
+    const resp = await request(app).post(`/users/u1/jobs/${jobIds[0]}`).set("authorization", `Bearer ${u2Token}`)
+    expect(resp.body).toEqual({
+      applied: jobIds[0]
+      });
+  })
+  test("works for logged in user", async function () {
+    const resp = await request(app).post(`/users/u1/jobs/${jobIds[0]}`).set("authorization", `Bearer ${u1Token}`)
+    expect(resp.body).toEqual({
+      "applied": jobIds[0]
+      });
+  })
+  test("unauthorized non admin / non logged in", async function () {
+    const resp = await request(app).post(`/users/u1/jobs/${jobIds[0]}`)
+    expect(resp.statusCode).toEqual(401);
+  })
+  test("bad request mising data", async function () {
+    const resp = await request(app).post(`/users/u1/jobs/`).set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(404);
+  })
+  test("bad request incorrect data", async function () {
+    const resp = await request(app).post(`/users/u10/jobs/${jobIds[0]}`).set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(404);
+  })
+})
 /************************************** GET /users */
 
 describe("GET /users", function () {

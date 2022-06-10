@@ -53,7 +53,7 @@ class Company {
   static async findAll(searchFilters = {}) {
     const { minEmployees, maxEmployees, name } = searchFilters;
 
-    console.log(`searchFilters = ${searchFilters}, minEmp = ${minEmployees}, maxEmp = ${maxEmployees}, name = ${name}`);
+    // console.log(`searchFilters = ${searchFilters}, minEmp = ${minEmployees}, maxEmp = ${maxEmployees}, name = ${name}`);
 
     // Query text "Where" statemet
     let whereProps = [];

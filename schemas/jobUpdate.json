@@ -13,7 +13,7 @@
         "minimum": 0
       },
       "equity": {
-        "type": "number",
+        "type": "string",
         "maximum": 1
       },
       "companyHandle": {

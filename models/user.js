@@ -190,6 +190,45 @@ class User {
     return user;
   }
 
+  // Apply for job
+  static async apply(username, jobId) {
+    const userCheck = await db.query(
+      `SELECT username
+       FROM users
+       WHERE username = $1`,
+    [username],
+    );
+
+if (!userCheck.rows[0]) {
+  throw new NotFoundError(`${username} does not exist`);
+}
+    const jobIdCheck = await db.query(
+      `SELECT id
+       FROM jobs
+       WHERE id = $1`,
+    [jobId],
+    );
+
+if (!jobIdCheck.rows[0]) {
+  throw new NotFoundError(`${jobId} does not exist`);
+}
+
+
+    const result = await db.query(
+      `INSERT INTO applications
+       (job_id, username)
+       VALUES ($1, $2)
+       `,
+        [
+          jobId,username
+        ],
+    );
+
+    const jApp = result.rows[0];
+
+    return jApp;
+  }
+
   /** Delete given user from database; returns undefined. */
 
   static async remove(username) {

@@ -2,7 +2,7 @@
 
 const { fail } = require("assert");
 const db = require("../db.js");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError, ExpressError } = require("../expressError");
 const Job = require("./job.js");
 const {
   commonBeforeAll,
@@ -28,14 +28,21 @@ describe("create", function () {
 
   test("works", async function () {
     let job = await Job.create(newJob);
-    expect(job).toEqual(newJob);
+    expect(job).toEqual({
+      id: expect.any(Number),
+      title: "new",
+      salary: 100000,
+      equity: "0.5",
+      companyHandle: "c1"
+    });
 
     const result = await db.query(
-          `SELECT title, salary, equity, company_handle AS "companyHandle"
+          `SELECT id,title, salary, equity, company_handle AS "companyHandle"
            FROM jobs
            WHERE title = 'new'`);
     expect(result.rows).toEqual([
       {
+        id: expect.any(Number),
         title: "new",
         salary: 100000,
         equity: "0.5",
@@ -44,13 +51,17 @@ describe("create", function () {
     ]);
   });
 
-  test("bad request with dupe", async function () {
+  test("bad request with duplicate", async function () {
     try {
-      await Job.create(newJob);
-      await Job.create(newJob);
+      await Job.create({
+        title: "j1",
+        salary: 100000,
+        equity: "0.5",
+        companyHandle: "c1"
+      });
       fail();
     } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err instanceof ExpressError).toBeTruthy();
     }
   });
 });
@@ -137,6 +148,7 @@ describe("get", function () {
   test("works", async function () {
     let job = await Job.get("j1");
     expect(job).toEqual({
+        id: expect.any(Number),
         title: "j1",
         salary: 100000,
         equity: "0",

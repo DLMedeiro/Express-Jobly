@@ -42,6 +42,16 @@ router.post("/", ensureAdmin, async function (req, res, next) {
     return next(err);
   }
 });
+router.post("/:username/jobs/:id", ensureAdminOrUser, async function (req, res, next) {
+  try {
+    const jId = +req.params.id
+    await User.apply(req.params.username, jId);
+    return res.json({applied: jId});
+  } catch (err) {
+    return next(err);
+  }
+});
+
 
 
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }

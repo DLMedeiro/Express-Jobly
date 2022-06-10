@@ -25,7 +25,7 @@ describe("POST /jobs", function () {
   const newJob = {
     title: "new",
     salary: 100000,
-    equity: 0.5,
+    equity: "0.5",
     companyHandle: "c1"
   };
 
@@ -37,6 +37,7 @@ describe("POST /jobs", function () {
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
       job: {
+        id: expect.any(Number),
         title: "new",
         salary: 100000,
         equity: "0.5",
@@ -157,6 +158,7 @@ describe("GET /jobs/:title", function () {
     const resp = await request(app).get(`/jobs/j1`);
     expect(resp.body).toEqual({
       job: {
+        id: expect.any(Number),
         title: "j1",
         salary: 100000,
         equity: "0",
