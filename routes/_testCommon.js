@@ -15,6 +15,8 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM companies");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM jobs");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM applications");
 
 
   await Company.create(
@@ -55,6 +57,8 @@ async function commonBeforeAll() {
       equity: 0.5,
       companyHandle: "c2"
     })).id;
+
+
   await User.register({
     username: "u1",
     firstName: "U1F",
@@ -79,6 +83,11 @@ async function commonBeforeAll() {
     password: "password3",
     isAdmin: false,
   });
+
+  // Needs other items to be set up first to run properly
+  await User.apply("u2",jobIds[0]);
+  // await User.apply("u2",jobIds[1]);
+
 }
 
 async function commonBeforeEach() {
@@ -96,6 +105,8 @@ async function commonAfterAll() {
 
 const u1Token = createToken({ username: "u1", isAdmin: false });
 const u2Token = createToken({ username: "u1", isAdmin: true });
+const u3Token = createToken({ username: "u2", isAdmin: true });
+const u4Token = createToken({ username: "u2", isAdmin: true });
 
 
 module.exports = {
@@ -105,5 +116,7 @@ module.exports = {
   commonAfterAll,
   u1Token,
   u2Token,
+  u3Token,
+  u4Token,
   jobIds
 };

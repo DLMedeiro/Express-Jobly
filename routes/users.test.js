@@ -13,6 +13,8 @@ const {
   commonAfterAll,
   u1Token,
   u2Token,
+  u3Token,
+  u4Token,
   jobIds
 } = require("./_testCommon");
 
@@ -195,29 +197,33 @@ describe("GET /users", function () {
 describe("GET /users/:username", function () {
   test("works for admin", async function () {
     const resp = await request(app)
-        .get(`/users/u1`)
-        .set("authorization", `Bearer ${u2Token}`);
+        .get(`/users/u2`)
+        .set("authorization", `Bearer ${u4Token}`);
     expect(resp.body).toEqual({
       user: {
-        username: "u1",
-        firstName: "U1F",
-        lastName: "U1L",
-        email: "user1@user.com",
-        isAdmin: false
+        username: "u2",
+        firstName: "U2F",
+        lastName: "U2L",
+        email: "user2@user.com",
+        isAdmin: false,
+        applications: {
+          jobId: [jobIds[0]]}
       },
     });
   });
   test("works for logged in user", async function () {
     const resp = await request(app)
-        .get(`/users/u1`)
-        .set("authorization", `Bearer ${u1Token}`);
+        .get(`/users/u2`)
+        .set("authorization", `Bearer ${u3Token}`);
     expect(resp.body).toEqual({
       user: {
-        username: "u1",
-        firstName: "U1F",
-        lastName: "U1L",
-        email: "user1@user.com",
-        isAdmin: false
+        username: "u2",
+        firstName: "U2F",
+        lastName: "U2L",
+        email: "user2@user.com",
+        isAdmin: false,
+        applications: {
+          jobId: [jobIds[0]]}
       },
     });
   });
