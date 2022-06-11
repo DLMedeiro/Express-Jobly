@@ -5,6 +5,7 @@ describe("config can come from env", function () {
     process.env.SECRET_KEY = "abc";
     process.env.PORT = "5000";
     process.env.DATABASE_URL = "other";
+    process.env.DATABASE_URL_TEST = "other";
     process.env.NODE_ENV = "other";
 
     const config = require("./config");
