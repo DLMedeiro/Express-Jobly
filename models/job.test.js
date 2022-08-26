@@ -36,11 +36,8 @@ describe("create", function () {
       companyHandle: "c1"
     });
 
-    const result = await db.query(
-          `SELECT id,title, salary, equity, company_handle AS "companyHandle"
-           FROM jobs
-           WHERE title = 'new'`);
-    expect(result.rows).toEqual([
+    const result = await Job.get(job.title);
+    expect(result).toEqual(
       {
         id: expect.any(Number),
         title: "new",
@@ -48,7 +45,7 @@ describe("create", function () {
         equity: "0.5",
         companyHandle: "c1"
       },
-    ]);
+    );
   });
 
   test("bad request with duplicate", async function () {
@@ -170,7 +167,7 @@ describe("get", function () {
 
 describe("update", function () {
   const updateData = {
-    title: "j1",
+    title: "j123",
     salary: 50,
     equity: "0",
     companyHandle: "c1"
@@ -179,20 +176,18 @@ describe("update", function () {
   test("works", async function () {
     let job = await Job.update("j1", updateData);
     expect(job).toEqual({
-      title: "j1",
+      title: "j123",
       ...updateData,
     });
 
-    const result = await db.query(
-          `SELECT title, salary, equity, company_handle AS "companyHandle"
-           FROM jobs
-           WHERE title = 'j1'`);
-    expect(result.rows).toEqual([{
-        title: "j1",
+    const result = await Job.get(job.title);
+    expect(result).toEqual({
+        id: expect.any(Number),
+        title: "j123",
         salary: 50,
         equity: "0",
         companyHandle: "c1"
-      }]);
+      });
   });
 
   test("not found if no such job", async function () {
@@ -219,9 +214,12 @@ describe("update", function () {
 describe("remove", function () {
   test("works", async function () {
     await Job.remove("j1");
-    const res = await db.query(
-        "SELECT title FROM jobs WHERE title='j1'");
-    expect(res.rows.length).toEqual(0);
+    try {
+      await Job.get("j1");
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
   });
 
   test("not found if no such job", async function () {
