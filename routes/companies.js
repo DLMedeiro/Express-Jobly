@@ -58,6 +58,7 @@ router.get("/", async function (req, res, next) {
     if (f.maxEmployees !== undefined) f.maxEmployees = +f.maxEmployees;
     // console.log(`req.query = ${req.query}`)
     const companies = await Company.findAll(f);
+    // f (filter criteria) is sent to the finalAll function to structure the SELECT statement and create the proper return
     return res.json({ companies });
   } catch (err) {
     return next(err);

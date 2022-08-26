@@ -55,10 +55,10 @@ class Company {
 
     // console.log(`searchFilters = ${searchFilters}, minEmp = ${minEmployees}, maxEmp = ${maxEmployees}, name = ${name}`);
 
-    // Query text "Where" statemet
+    // Query text "Where" statement
     let whereProps = [];
 
-    // Values to be added in to where statement $ placehoders
+    // Values to be added in to where statement $ placeholders
     let queryVals = [];
 
     let sqlQuery = 
@@ -89,6 +89,8 @@ class Company {
     if(whereProps.length > 0) {
       sqlQuery += " WHERE " + whereProps.join(" AND ");
     };
+      // Add WHERE query information for each search criteria provided.  "whereProps" = the where property, queryVals.length provides the "$x" value needed to place the variable
+      // Allows for a simpler SELECT statement, if criteria is not provided it is not included in the statement
 
     sqlQuery += " ORDER BY name"
 
