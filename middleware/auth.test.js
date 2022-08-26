@@ -82,7 +82,7 @@ describe("ensureLoggedIn", function () {
 });
 
 describe("ensureAdmin", function () {
-  test("works", function () {
+  test("works - admin", function () {
     expect.assertions(1);
     const req = {};
     const res = { locals: { user: { username: "test", isAdmin: true } } };
@@ -91,8 +91,16 @@ describe("ensureAdmin", function () {
     };
     ensureAdmin(req, res, next);
   });
-
-  test("unauth if not admin", function () {
+  test("works - non admin", function () {
+    expect.assertions(1);
+    const req = {};
+    const res = { locals: { user: { username: "test", isAdmin: false } } };
+    const next = function (err) {
+      expect(err).toBeTruthy();
+    };
+    ensureAdmin(req, res, next);
+  });
+  test("unauth if not admin and not logged in", function () {
     expect.assertions(1);
     const req = {};
     const res = { locals: {} };
