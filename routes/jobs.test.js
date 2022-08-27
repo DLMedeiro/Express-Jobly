@@ -97,7 +97,7 @@ describe("GET /jobs", function () {
     });
   });
   test("ok for all filters", async function () {
-    const resp = await request(app).get("/jobs?title=j1&minSalary=900&hasEquity:flase");
+    const resp = await request(app).get("/jobs?title=j1&minSalary=900&hasEquity:false");
     expect(resp.body).toEqual({
       jobs:
           [
@@ -126,6 +126,20 @@ describe("GET /jobs", function () {
   });
   test("ok for has equity > 0", async function () {
     const resp = await request(app).get("/jobs?hasEquity=true");
+    expect(resp.body).toEqual({
+      jobs:
+          [
+            {
+              title: "j2",
+              salary: 500000,
+              equity: "0.5",
+              companyHandle: "c2"
+            }
+          ],
+    });
+  });
+  test("ok for companyHandle", async function () {
+    const resp = await request(app).get("/jobs?companyHandle=c2");
     expect(resp.body).toEqual({
       jobs:
           [

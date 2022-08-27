@@ -3,6 +3,7 @@
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate} = require("../helpers/sql");
+const Job = require("./job");
 
 
 /** Related functions for companies. */
@@ -17,15 +18,16 @@ class Company {
    * Throws BadRequestError if company already in database.
    * */
 
-  static async create({ handle, name, description, numEmployees, logoUrl }) {
+  static async create(data) {
     const duplicateCheck = await db.query(
           `SELECT handle
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+        [data.handle]);
 
     if (duplicateCheck.rows[0])
-      throw new BadRequestError(`Duplicate company: ${handle}`);
+      // throw new BadRequestError(`Duplicate company: ${handle}`);
+      throw new ExpressError(`Duplicate job: ${data.title}`,400);
 
     const result = await db.query(
           `INSERT INTO companies
@@ -33,11 +35,11 @@ class Company {
            VALUES ($1, $2, $3, $4, $5)
            RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`,
         [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
+          data.handle,
+          data.name,
+          data.description,
+          data.numEmployees,
+          data.logoUrl,
         ],
     );
     const company = result.rows[0];
@@ -112,43 +114,82 @@ class Company {
    **/
 
   static async get(handle) {
-    const companyRes = await db.query(
-          `SELECT c.handle,
-                  c.name,
-                  c.description,
-                  c.num_employees AS "numEmployees",
-                  c.logo_url AS "logoUrl",
-                  j.id,
-                  j.title,
-                  j.salary,
-                  j.equity,
-                  j.company_handle AS "companyHandle"
-           FROM companies AS c
-            JOIN jobs AS j ON c.handle = j.company_handle
-           WHERE c.handle = $1`,
+
+    // Some companies will not have jobs attached, get function needs to pull company regardless of if a job is attached
+    
+    const initialSearch = await db.query(
+      `SELECT handle,
+              name,
+              description,
+              num_employees AS "numEmployees",
+              logo_url AS "logoUrl"
+        FROM companies 
+        WHERE handle = $1`, 
         [handle]);
 
-    const c = companyRes.rows[0];
+    const i = initialSearch.rows[0];
+    if (!i) throw new NotFoundError(`No company: ${handle}`);
+    
+    const jobSearch = await Job.findAll({companyHandle: i.handle})
+    // i.handle = company_handle used as a filter to see if jobs are attached
+    console.log(jobSearch)
+    
+    // Does the company have a job attached?
+    if(jobSearch.length == 0) {
+      let companyRes = await db.query(
+        `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEmployees",
+                logo_url AS "logoUrl"
+         FROM companies
+         WHERE handle = $1`,[handle]);
 
-    if (!c) throw new NotFoundError(`No company: ${handle}`);
-
-    return {
-      name: c.name,
-      handle: c.handle,
-      description: c.description,
-      num_employees: c.numEmployees,
-      logo_url: c.logoUrl,
-      jobs: {
-        id: c.id,
-        title: c.title,
-        salary: c.salary,
-        equity: c.equity,
-        companyHandle: c.companyHandle
+         let c = companyRes.rows[0];
+         
+      return {
+        name: c.name,
+        handle: c.handle,
+        description: c.description,
+        num_employees: c.numEmployees,
+        logo_url: c.logoUrl,
       }
-    };
-  }
-
-  /** Update company data with `data`.
+    } else {
+        let companyRes = await db.query(
+          `SELECT c.handle,
+          c.name,
+          c.description,
+          c.num_employees AS "numEmployees",
+          c.logo_url AS "logoUrl",
+          j.id,
+          j.title,
+          j.salary,
+          j.equity,
+          j.company_handle AS "companyHandle"
+          FROM companies AS c
+          JOIN jobs AS j ON c.handle = j.company_handle
+          WHERE c.handle = $1`,[handle]);
+          
+          let c = companyRes.rows[0];
+          
+          return {
+            name: c.name,
+            handle: c.handle,
+            description: c.description,
+            num_employees: c.numEmployees,
+            logo_url: c.logoUrl,
+            jobs: {
+              id: c.id,
+              title: c.title,
+              salary: c.salary,
+              equity: c.equity,
+              companyHandle: c.companyHandle
+            }
+          };
+        }
+      }
+        
+        /** Update company data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.

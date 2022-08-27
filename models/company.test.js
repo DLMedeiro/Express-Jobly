@@ -2,7 +2,7 @@
 
 const { fail } = require("assert");
 const db = require("../db.js");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError, ExpressError } = require("../expressError");
 const Company = require("./company.js");
 const {
   commonBeforeAll,
@@ -31,11 +31,8 @@ describe("create", function () {
     let company = await Company.create(newCompany);
     expect(company).toEqual(newCompany);
 
-    const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
-           FROM companies
-           WHERE handle = 'new'`);
-    expect(result.rows).toEqual([
+    const result = await Company.get(company.handle);
+    expect(result).toEqual(
       {
         handle: "new",
         name: "New",
@@ -43,20 +40,25 @@ describe("create", function () {
         num_employees: 1,
         logo_url: "http://new.img",
       },
-    ]);
+    );
   });
 
-  test("bad request with dupe", async function () {
+// Mimics job set up and test but showing failure
+  test("bad request with duplicate", async function () {
     try {
-      await Company.create(newCompany);
-      await Company.create(newCompany);
+      await Company.create({
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      });
       fail();
     } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err instanceof ExpressError).toBeTruthy();
     }
   });
 });
-
 /************************************** findAll */
 
 describe("findAll", function () {

@@ -117,6 +117,17 @@ describe("findAll", function () {
         }
     ]);
   });
+  test("works: company_handle only", async function () {
+    let jobs = await Job.findAll({companyHandle:"c2"});
+    expect(jobs).toEqual( [
+        {
+            title: "j2",
+            salary: 500000,
+            equity: "0.5",
+            companyHandle: "c2"
+        }
+    ]);
+  });
   test("works: multiple filters", async function () {
     let jobs = await Job.findAll({title:"j", minSalary:100000});
     expect(jobs).toEqual( [

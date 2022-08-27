@@ -54,8 +54,9 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 router.get("/", async function (req, res, next) {
   try {
     const f = req.query
-    // Turns string values into an integer
     if (f.minSalary !== undefined) f.minSalary = +f.minSalary;
+      // Turns string values into an integer
+
     // console.log(`req.query = ${req.query}`)
     const jobs = await Job.findAll(f);
     return res.json({ jobs });
