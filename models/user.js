@@ -120,7 +120,7 @@ class User {
         `,[result[r].username]
       );
 
-      result[r].applications = {"jobs IDs": userApps.rows.map(a => a.job_id)};
+      result[r].applications = {"job_IDs": userApps.rows.map(a => a.job_id)};
 
     }
 
@@ -157,7 +157,7 @@ class User {
     );
     
     // Add new key value pair into user
-    user.applications = {"jobs IDs": userApps.rows.map(a => a.job_id)};
+    user.applications = {"job_IDs": userApps.rows.map(a => a.job_id)};
 
     // user.applications = 
     // {

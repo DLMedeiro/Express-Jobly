@@ -118,6 +118,9 @@ describe("findAll", function () {
         lastName: "U1L",
         email: "u1@email.com",
         isAdmin: false,
+        applications: {
+          job_IDs: [expect.any(Number)]
+        }
       },
       {
         username: "u2",
@@ -125,6 +128,9 @@ describe("findAll", function () {
         lastName: "U2L",
         email: "u2@email.com",
         isAdmin: false,
+        applications: {
+          job_IDs: []
+        }
       },
     ]);
   });
@@ -142,7 +148,7 @@ describe("get", function () {
       email: "u1@email.com",
       isAdmin: false,
       applications: {
-        jobId: [jobIdList[1]]
+        job_IDs: [expect.any(Number)]
       }
     });
   });

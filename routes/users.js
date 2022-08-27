@@ -61,7 +61,7 @@ router.post("/:username/jobs/:id", ensureAdminOrUser, async function (req, res, 
  * Authorization required: login -> updated to admin only
  **/
 
-router.get("/", async function (req, res, next) {
+router.get("/", ensureAdmin, async function (req, res, next) {
   try {
     const users = await User.findAll();
     return res.json({ users });
@@ -69,14 +69,6 @@ router.get("/", async function (req, res, next) {
     return next(err);
   }
 });
-// router.get("/", ensureAdmin, async function (req, res, next) {
-//   try {
-//     const users = await User.findAll();
-//     return res.json({ users });
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
 
 
 /** GET /[username] => { user }
@@ -86,7 +78,7 @@ router.get("/", async function (req, res, next) {
  * Authorization required: login -> updated to admin only
  **/
 
-router.get("/:username", async function (req, res, next) {
+router.get("/:username", ensureAdminOrUser, async function (req, res, next) {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });
@@ -94,14 +86,6 @@ router.get("/:username", async function (req, res, next) {
     return next(err);
   }
 });
-// router.get("/:username", ensureAdminOrUser, async function (req, res, next) {
-//   try {
-//     const user = await User.get(req.params.username);
-//     return res.json({ user });
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
 
 
 /** PATCH /[username] { user } => { user }

@@ -155,6 +155,9 @@ describe("GET /users", function () {
           lastName: "U1L",
           email: "user1@user.com",
           isAdmin: false,
+          applications: {
+            job_IDs: []
+          }
         },
         {
           username: "u2",
@@ -162,6 +165,9 @@ describe("GET /users", function () {
           lastName: "U2L",
           email: "user2@user.com",
           isAdmin: false,
+          applications: {
+            job_IDs: [expect.any(Number)]
+          }
         },
         {
           username: "u3",
@@ -169,6 +175,9 @@ describe("GET /users", function () {
           lastName: "U3L",
           email: "user3@user.com",
           isAdmin: false,
+          applications: {
+            job_IDs: []
+          }
         },
       ],
     });
@@ -207,7 +216,8 @@ describe("GET /users/:username", function () {
         email: "user2@user.com",
         isAdmin: false,
         applications: {
-          jobId: [jobIds[0]]}
+          job_IDs: [expect.any(Number)]
+        }
       },
     });
   });
@@ -223,7 +233,8 @@ describe("GET /users/:username", function () {
         email: "user2@user.com",
         isAdmin: false,
         applications: {
-          jobId: [jobIds[0]]}
+          job_IDs: [expect.any(Number)]
+        }
       },
     });
   });
