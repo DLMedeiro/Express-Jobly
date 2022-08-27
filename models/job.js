@@ -53,14 +53,14 @@ class Job {
    * */
 
   static async findAll(searchFilters = {}) {
-    const { title, minSalary, hasEquity } = searchFilters;
+    const { title, minSalary, hasEquity, companyHandle} = searchFilters;
 
-    // console.log(`searchFilters = ${searchFilters}, title = ${title}, minSalary = ${minSalary}, hasEquity = ${hasEquity}`);
+    // console.log(`searchFilters = ${searchFilters}, title = ${title}, minSalary = ${minSalary}, hasEquity = ${hasEquity}, companyHandle = ${companyHandle}`);
 
-    // Query text "Where" statemet
+    // Query text "Where" statement
     let whereProps = [];
 
-    // Values to be added in to where statement $ placehoders
+    // Values to be added in to where statement $ placeholders
     let queryVals = [];
 
     let sqlQuery = 
@@ -70,7 +70,7 @@ class Job {
         company_handle AS "companyHandle"
       FROM jobs`;
     
-    if (title) {
+    if (title !== undefined) {
     queryVals.push(`%${title}%`);
     whereProps.push(`title ILIKE $${queryVals.length}`);
     };
@@ -80,8 +80,13 @@ class Job {
       whereProps.push(`salary >= $${queryVals.length}`);
     };
 
-    if(hasEquity) {
+    if(hasEquity !== undefined) {
         whereProps.push(`equity > 0`)
+    }
+
+    if(companyHandle !== undefined) {
+      queryVals.push(companyHandle);
+      whereProps.push(`company_handle = $${queryVals.length}`);
     }
 
 
