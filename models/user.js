@@ -102,7 +102,7 @@ class User {
    **/
 
   static async findAll() {
-    const result = await db.query(
+    const res = await db.query(
           `SELECT username,
                   first_name AS "firstName",
                   last_name AS "lastName",
@@ -112,7 +112,19 @@ class User {
            ORDER BY username`,
     );
 
-    return result.rows;
+    let result = res.rows
+    
+    for (let r in result) {
+      const userApps = await db.query(
+        `SELECT a.job_id FROM applications AS a WHERE a.username = $1
+        `,[result[r].username]
+      );
+
+      result[r].applications = {"jobs IDs": userApps.rows.map(a => a.job_id)};
+
+    }
+
+    return result;
   }
 
   /** Given a username, return data about user.
@@ -145,7 +157,7 @@ class User {
     );
     
     // Add new key value pair into user
-    user.applications = {"jobId": userApps.rows.map(a => a.job_id)};
+    user.applications = {"jobs IDs": userApps.rows.map(a => a.job_id)};
 
     // user.applications = 
     // {
