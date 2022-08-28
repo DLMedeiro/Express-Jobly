@@ -8,6 +8,7 @@ const {
 
 const db = require("../db.js");
 const User = require("./user.js");
+const Job = require("./job.js");
 
 const {
   commonBeforeAll,
@@ -16,6 +17,7 @@ const {
   commonAfterAll,
   jobIdList
 } = require("./_testCommon");
+const { jobIds } = require("../routes/_testCommon");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -244,14 +246,26 @@ describe("update", function () {
 describe("apply", function () {
   test("works and verifies addition to database", async function() {
     // const num = parseInt()
-    await User.apply("u1", jobIdList[0]);
+    // let app = await User.apply("u1", jobIdList[0]);
 
-    const compApp = await db.query(
-      "SELECT * FROM applications WHERE job_id = $1", [jobIdList[0]]);
-    expect(compApp.rows).toEqual([{
-          job_id: jobIdList[0],
-          username: "u1"
-        }]);
+    let job = await Job.get("j1")
+    // let jobType = typeof(job.id)
+
+    let application = await User.apply("u1", job.id);
+
+    // const compApp = await User.get(application.username)
+
+    expect(application).toEqual({})
+
+    // expect(compApp).toEqual(
+    //   {"applications": 
+    //     {"job_IDs": [expect.any(Number)]},
+    //      "email": "u1@email.com",
+    //      "firstName": "U1F",
+    //      "isAdmin": false,
+    //      "lastName": "U1L",
+    //      "username": "u1"
+    //   });
   })
   test("user doesn't exist", async function() {
     try {

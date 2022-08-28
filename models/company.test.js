@@ -31,8 +31,8 @@ describe("create", function () {
     let company = await Company.create(newCompany);
     expect(company).toEqual(newCompany);
 
-    const result = await Company.get(company.handle);
-    expect(result).toEqual(
+
+    expect(await Company.get(company.handle)).toEqual(
       {
         handle: "new",
         name: "New",
@@ -212,17 +212,22 @@ describe("update", function () {
       ...updateData,
     });
 
-    const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
-           FROM companies
-           WHERE handle = 'c1'`);
-    expect(result.rows).toEqual([{
+    const result = await Company.get(company.handle)
+
+    expect(result).toEqual({
       handle: "c1",
       name: "New",
       description: "New Description",
       num_employees: 10,
       logo_url: "http://new.img",
-    }]);
+      jobs: {
+        "companyHandle": "c1",
+        "equity": "0",
+        "id": expect.any(Number),
+        "salary": 100000,
+        "title": "j1",
+         }
+    });
   });
 
   test("works: null fields", async function () {
@@ -239,17 +244,21 @@ describe("update", function () {
       ...updateDataSetNulls,
     });
 
-    const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
-           FROM companies
-           WHERE handle = 'c1'`);
-    expect(result.rows).toEqual([{
+    const result = await Company.get(company.handle)
+    expect(result).toEqual({
       handle: "c1",
       name: "New",
       description: "New Description",
       num_employees: null,
       logo_url: null,
-    }]);
+      jobs: {
+        "companyHandle": "c1",
+        "equity": "0",
+        "id": expect.any(Number),
+        "salary": 100000,
+        "title": "j1",
+         }
+    });
   });
 
   test("not found if no such company", async function () {
@@ -276,9 +285,13 @@ describe("update", function () {
 describe("remove", function () {
   test("works", async function () {
     await Company.remove("c1");
-    const res = await db.query(
-        "SELECT handle FROM companies WHERE handle='c1'");
-    expect(res.rows.length).toEqual(0);
+
+    try {
+      await Company.get("c1");
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
   });
 
   test("not found if no such company", async function () {
