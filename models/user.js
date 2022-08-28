@@ -160,15 +160,9 @@ class User {
     user.applications = {"job_IDs": userApps.rows.map(a => a.job_id)};
 
     // user.applications = 
-    // {
-    //   "user": {
-    //     "jobId": [
-    //       201,
-    //       1,
-    //       2
-    //     ]
-    //   }
-    // }
+      // "applications": {
+      //   "jobs IDs": []
+      // }
 
     return user;
   }
@@ -222,6 +216,13 @@ class User {
   }
 
   // Apply for job
+
+  /** Apply for a job using username and application Id.
+ *
+ * Returns [jobId,username]
+ *
+ * Throws NotFoundError if user not found.
+ **/
   static async apply(username, jobId) {
     const userCheck = await db.query(
       `SELECT username

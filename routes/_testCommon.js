@@ -84,9 +84,7 @@ async function commonBeforeAll() {
     isAdmin: false,
   });
 
-  // Needs other items to be set up first to run properly
   await User.apply("u2",jobIds[0]);
-  // await User.apply("u2",jobIds[1]);
 
 }
 

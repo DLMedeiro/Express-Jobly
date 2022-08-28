@@ -1,7 +1,6 @@
 "use strict";
 
 const { fail } = require("assert");
-const db = require("../db.js");
 const { BadRequestError, NotFoundError, ExpressError } = require("../expressError");
 const Job = require("./job.js");
 const {
@@ -146,9 +145,6 @@ describe("findAll", function () {
     ]);
   });  
 });
-
-
-
 
 /************************************** get */
 

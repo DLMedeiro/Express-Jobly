@@ -1,8 +1,7 @@
 "use strict";
 
-const { query } = require("express");
 const db = require("../db");
-const { BadRequestError, NotFoundError, ExpressError } = require("../expressError");
+const { NotFoundError, ExpressError } = require("../expressError");
 const { sqlForPartialUpdate} = require("../helpers/sql");
 
 
@@ -84,11 +83,11 @@ class Job {
         whereProps.push(`equity > 0`)
     }
 
+    // added to support FindAll companies response
     if(companyHandle !== undefined) {
       queryVals.push(companyHandle);
       whereProps.push(`company_handle = $${queryVals.length}`);
     }
-
 
     if(whereProps.length > 0) {
       sqlQuery += " WHERE " + whereProps.join(" AND ");

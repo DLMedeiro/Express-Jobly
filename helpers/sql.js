@@ -1,7 +1,5 @@
 const { BadRequestError } = require("../expressError");
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
-
 // Function takes in req.body as dataToUpdate which is passed through the companies/:handle patch route, into the update function on the companies model.
 // jsToSQL and the cols variable translate the numEmployees and logoUrl aliases into their equivalent SQL column titles.
 // the cols variable also creates a new array mapping the existing keys to their equivalent variable number (used back in the update function)
@@ -15,10 +13,10 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
     // keys = name,numEmployees,logoUrl
   if (keys.length === 0) throw new BadRequestError("No data");
 
-    // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
-
+  
   const cols = keys.map((colName, idx) =>
-      `"${jsToSql[colName] || colName}"=$${idx + 1}`,
+  `"${jsToSql[colName] || colName}"=$${idx + 1}`,
+    // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
   );
     // console.log(`cols = ${cols}`)
       // cols = "name"=$1,"num_employees"=$2,"logo_url"=$3
