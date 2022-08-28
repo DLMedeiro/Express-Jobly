@@ -25,9 +25,8 @@ class Company {
            WHERE handle = $1`,
         [data.handle]);
 
-    if (duplicateCheck.rows[0])
-      // throw new BadRequestError(`Duplicate company: ${handle}`);
-      throw new ExpressError(`Duplicate job: ${data.title}`,400);
+    if (duplicateCheck.rows.length > 0)
+      throw new BadRequestError(`Duplicate company: ${data.handle}`);
 
     const result = await db.query(
           `INSERT INTO companies
@@ -60,7 +59,7 @@ class Company {
     // Query text "Where" statement
     let whereProps = [];
 
-    // Values to be added in to where statement $ placeholders
+    // Values to be added in to where statement -> $ placeholders
     let queryVals = [];
 
     let sqlQuery = 
@@ -115,7 +114,7 @@ class Company {
 
   static async get(handle) {
 
-    // Some companies will not have jobs attached, get function needs to pull company regardless of if a job is attached
+    // Some companies will not have jobs attached, get function needs to pull company regardless if a job is attached
     
     const initialSearch = await db.query(
       `SELECT handle,
@@ -132,7 +131,6 @@ class Company {
     
     const jobSearch = await Job.findAll({companyHandle: i.handle})
     // i.handle = company_handle used as a filter to see if jobs are attached
-    console.log(jobSearch)
     
     // Does the company have a job attached?
     if(jobSearch.length == 0) {

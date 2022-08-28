@@ -43,7 +43,6 @@ describe("create", function () {
     );
   });
 
-// Mimics job set up and test but showing failure
   test("bad request with duplicate", async function () {
     try {
       await Company.create({
