@@ -245,27 +245,24 @@ describe("update", function () {
 /************************************** apply */
 describe("apply", function () {
   test("works and verifies addition to database", async function() {
-    // const num = parseInt()
-    // let app = await User.apply("u1", jobIdList[0]);
 
     let job = await Job.get("j1")
-    // let jobType = typeof(job.id)
+      // needed to get the job id
 
-    let application = await User.apply("u1", job.id);
+    await User.apply("u1", job.id);
+      // insert into the application table
 
-    // const compApp = await User.get(application.username)
+    const compApp = await User.get("u1")
 
-    expect(application).toEqual({})
-
-    // expect(compApp).toEqual(
-    //   {"applications": 
-    //     {"job_IDs": [expect.any(Number)]},
-    //      "email": "u1@email.com",
-    //      "firstName": "U1F",
-    //      "isAdmin": false,
-    //      "lastName": "U1L",
-    //      "username": "u1"
-    //   });
+    expect(compApp).toEqual(
+      {"applications": 
+        {"job_IDs": [expect.any(Number), expect.any(Number)]},
+         "email": "u1@email.com",
+         "firstName": "U1F",
+         "isAdmin": false,
+         "lastName": "U1L",
+         "username": "u1"
+      });
   })
   test("user doesn't exist", async function() {
     try {
@@ -291,9 +288,12 @@ describe("apply", function () {
 describe("remove", function () {
   test("works", async function () {
     await User.remove("u1");
-    const res = await db.query(
-        "SELECT * FROM users WHERE username='u1'");
-    expect(res.rows.length).toEqual(0);
+    try {
+      await User.get("u1");
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
   });
 
   test("not found if no such user", async function () {
