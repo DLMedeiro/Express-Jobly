@@ -2,7 +2,7 @@
 
 Jobly is a job searching API built using Node, Express, and PostrgeSQL.
 
-To run this using ```node server.js```
+To run this use: ```node server.js```
 
 ## Routes
 
@@ -11,7 +11,7 @@ To run this using ```node server.js```
 *** = Admin or active user required
 
 ### Users
-
+>
 __POST /users__ **
 
 __POST /users/username/id__ ***
@@ -23,7 +23,7 @@ __GET /users/username__ ***
 __PATCH users/username__ ***
 
 __DELETE users/username__ ***
-
+>
 ### Companies
 
 __POST /companies__ **
