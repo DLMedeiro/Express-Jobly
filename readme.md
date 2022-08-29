@@ -11,42 +11,42 @@ To run this use: ```node server.js```
 *** = Admin or active user required
 
 ### Users
->
-__POST /users__ **
 
-__POST /users/username/id__ ***
+POST /users **
 
-__GET /users__ **
+POST /users/username/id ***
 
-__GET /users/username__ ***
+GET /users **
 
-__PATCH users/username__ ***
+GET /users/username ***
 
-__DELETE users/username__ ***
->
+PATCH users/username ***
+
+DELETE users/username ***
+
 ### Companies
 
-__POST /companies__ **
+POST /companies **
 
-__GET /companies__ 
+GET /companies 
 
-__GET /companies/handle__
+GET /companies/handle
 
-__PATCH companies/handle__ **
+PATCH companies/handle **
 
-__DELETE companies/handle__ **
+DELETE companies/handle **
 
 ### Jobs
 
-__POST /jobs__ **
+POST /jobs **
 
-__GET /jobs__ 
+GET /jobs 
 
-__GET /jobs/title__ 
+GET /jobs/title 
 
-__PATCH jobs/title__ **
+PATCH jobs/title **
 
-__DELETE jobs/title__ **
+DELETE jobs/title **
 
 
 ## Testing
