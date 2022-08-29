@@ -5,7 +5,7 @@ describe("config can come from env", function () {
     process.env.SECRET_KEY = "abc";
     process.env.PORT = "5000";
     process.env.DATABASE_URL = "other";
-    process.env.DATABASE_URL_TEST = "other";
+    process.env.DATABASE_URL_TEST = "test";
     process.env.NODE_ENV = "other";
 
     const config = require("./config");
@@ -14,15 +14,10 @@ describe("config can come from env", function () {
     expect(config.getDatabaseUri()).toEqual("other");
     expect(config.BCRYPT_WORK_FACTOR).toEqual(12);
 
-    delete process.env.SECRET_KEY;
-    delete process.env.PORT;
-    delete process.env.BCRYPT_WORK_FACTOR;
-    delete process.env.DATABASE_URL;
-
-    expect(config.getDatabaseUri()).toEqual("jobly");
+    expect(config.getDatabaseUri()).toEqual("other");
     process.env.NODE_ENV = "test";
 
-    expect(config.getDatabaseUri()).toEqual("jobly_test");
+    expect(config.getDatabaseUri()).toEqual("test");
   });
 })
 

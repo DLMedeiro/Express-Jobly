@@ -6,8 +6,8 @@ require("dotenv").config();
 require("colors");
 
 const SECRET_KEY = process.env.SECRET_KEY || "secret-dev";
-const DATABASE_URL = process.env.DATABASE_URL || "jobly";
-const DATABASE_URL_TEST = process.env.DATABASE_URL_TEST || "jobly_test";
+const database = process.env.DATABASE_URL || "jobly";
+const database_test = process.env.DATABASE_URL_TEST || "jobly_test";
 
 // Changed from 3001 to 5432 - const error = this._ending ? new Error('Connection terminated') : new Error('Connection terminated unexpectedly')
 const PORT = +process.env.PORT || 3001;
@@ -19,8 +19,8 @@ const PORT = +process.env.PORT || 3001;
 
 function getDatabaseUri() {
   return (process.env.NODE_ENV === "test")
-      ? DATABASE_URL_TEST
-      : DATABASE_URL;
+      ? database_test
+      : database;
 }
 
 // Initial
