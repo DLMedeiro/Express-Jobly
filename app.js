@@ -27,7 +27,7 @@ app.use("/companies", companiesRoutes);
 app.use("/users", usersRoutes);
 app.use("/jobs", jobsRoutes);
 
-app.get("/", () => {
+app.get("/", function(req, res) {
   res.send("Application Started");
 })
 
